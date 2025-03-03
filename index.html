@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Photobooth</title>
+    <!-- Importing Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Linking external CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Page title -->
+    <h1 style="color: #ff3366;">Digital Photobooth</h1>
+    <p id="photoCount">0/3</p>
+    
+    <div class="container">
+      
+        <div class="video-container">
+            <video id="video" autoplay></video>
+            <p id="countdown">5</p>
+        </div>
+        <div class="photo-container">
+            <img id="photo1" src="" alt="" style="visibility: hidden;">
+            <img id="photo2" src="" alt="" style="visibility: hidden;">
+            <img id="photo3" src="" alt="" style="visibility: hidden;">
+        </div>
+    </div>
+    
+    <!-- Buttons moved here under the video -->
+    <div class="controls">
+        <button id="captureBtn">Start Capture</button>
+        <button id="downloadBtn" class="hidden">Download</button>
+        <!-- Theme toggle button -->
+        <button id="theme-toggle">
+            <img src="moon-icon.png" alt="Toggle Theme">
+        </button>
+    </div>
+    
+    <div class="photo-container">
+        <img id="photo1" src="" alt="" style="visibility: hidden;">
+        <img id="photo2" src="" alt="" style="visibility: hidden;">
+        <img id="photo3" src="" alt="" style="visibility: hidden;">
+    </div>
+    
+    <!-- Hidden canvas for photo collage -->
+    <canvas id="canvas" width="500" height="1200" style="display:none;"></canvas>
+    
+    <!-- Linking external JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

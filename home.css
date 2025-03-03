@@ -1,0 +1,132 @@
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Josefin Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffe6f2;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Homepage Styles */
+.homepage {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Full screen height */
+    text-align: center;
+}
+h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 50px;
+    margin-bottom: 20px; /* Add spacing between text and buttons */
+}
+
+/* Navigation Bar Styles */
+.navbar {
+    position: absolute;
+    top: 20px; /* Adds space from the top */
+    left: 50%;
+    transform: translateX(-50%); /* Centers it horizontally */
+    display: flex;
+    gap: 30px; /* Adds space between links */
+    font-size: 1rem;
+}
+
+/* Style for Navigation Links */
+.navbar a {
+    text-decoration: none; /* Removes underline */
+    color: black; /* Text color */
+    font-weight: 600;
+    font-family: 'Open Sans,' sans-serif; /* Uses Caveat font */
+    transition: color 0.3s;
+}
+
+/* Hover Effect */
+.navbar a:hover {
+    color: #ff3366; /* Changes color on hover */
+}
+/* Container for the buttons */
+.button-container {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    justify-content: center;
+}
+
+/* Start button styling */
+.start-btn {
+    background-color: #ff3366;
+    color: white;
+    font-size: 22px;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.start-btn:hover {
+    background-color: #cc0044;
+}
+
+/* Theme toggle button */
+#theme-toggle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%; /* Makes it a circle */
+    background-color: white; /* Default background color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ccc; /* Optional border */
+    cursor: pointer;
+}
+
+#theme-toggle img {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Dark mode styles */
+.dark-mode .navbar {
+    background-color: #222; /* Darker background */
+}
+
+.dark-mode .navbar a {
+    color: white; /* Change text color to white */
+}
+
+.dark-mode {
+    background-color: #222;
+    color: white;
+}
+
+/* Change button appearance in dark mode */
+.dark-mode .start-btn {
+    background-color: #00da2f;
+}
+
+.dark-mode .theme-toggle-btn {
+    background-color: black;
+}
+.dark-mode #theme-toggle {
+    background-color: black; /* Change background in dark mode */
+    border: 2px solid white;
+}
+
+.dark-mode .theme-toggle-btn img {
+    filter: invert(1); /* White icon */
+}
+.dark-mode h1, .dark-mode p {
+    color: white;
+}
