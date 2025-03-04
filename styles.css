@@ -19,16 +19,12 @@ h1 {
 /* Container for main elements */
 .container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* Spread items to left and right */
     align-items: center;
-    gap: 20px;
-    background: white;
+    width: 90vw;
+    max-width: 1200px;
+    margin: auto;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    flex-direction: row; /* Change to row to align items horizontally */
-    position: relative; /* Ensure the container is positioned relatively */
-    margin: 0 auto; /* Center the container */
 }
 
 /* Styling the video feed */
@@ -41,11 +37,19 @@ video {
 }
 /* Ensure the video container is positioned relatively */
 .video-container {
-    position: relative; /* Necessary for absolute positioning of the countdown */
+    flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Move video to the left */
+    margin-left: 40px; /* Space from left edge */
+}
+.photo-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-} 
+    justify-content: center;
+    margin-right: 40px; /* Reduce excessive right margin */
+}
 
 /* Container for displaying captured photos */
 .photo-container {
@@ -66,10 +70,14 @@ video {
 
 /* Counter text styling */
 #photoCount {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #000;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 /* Controls section styling */
