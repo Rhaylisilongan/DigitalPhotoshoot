@@ -23,13 +23,14 @@ function toggleTheme() {
 }
 
 function applyTheme(theme) {
+    const themeIcon = document.querySelector('.theme-icon'); // Target the icon by class
     if (theme === 'dark') {
         body.classList.add('dark-mode');
-        themeIcon.src = 'sun-icon.png';
+        themeIcon.src = 'sun-icon.png'; // Change icon to sun
         localStorage.setItem('theme', 'dark');
     } else {
         body.classList.remove('dark-mode');
-        themeIcon.src = 'moon-icon.png';
+        themeIcon.src = 'moon-icon.png'; // Change icon to moon
         localStorage.setItem('theme', 'light');
     }
 }
@@ -73,6 +74,16 @@ function startCountdown(seconds, callback) {
 
 // Function to capture a photo
 function capturePhoto() {
+    // Trigger the flash effect
+    const videoContainer = document.querySelector('video');
+    videoContainer.classList.add('flash-effect'); // Add flash effect
+
+    // Remove the flash effect after the animation completes
+    setTimeout(() => {
+        videoContainer.classList.remove('flash-effect');
+    }, 300); // Match the duration of the CSS animation
+
+    // Capture the photo
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = video.videoWidth;
     tempCanvas.height = video.videoHeight;
@@ -106,6 +117,7 @@ function provideFeedback() {
     }, 100);
 }
 
+
 // Function to start the capture sequence
 function startCaptureSequence() {
     photos.length = 0;
@@ -127,6 +139,12 @@ function startCaptureSequence() {
         });
     }
     takeNextPhoto(1);
+}
+function addPhotoToPreview(photoData, count) {
+    const photoElement = document.getElementById(`photo${count}`);
+    photoElement.src = photoData;
+    photoElement.style.visibility = 'visible';
+    photoElement.style.animation = 'slideInLeft 1s ease forwards'; // Trigger slide-in animation
 }
 
 // Function to create a photo collage
