@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Collage</title>
+    <link rel="stylesheet" href="customization.css">
+</head>
+<body>
+    <h1>Customize Your Collage</h1>
+    <canvas id="collageCanvas" width="800" height="1200"></canvas>
+    <div class="controls">
+        <button id="grayscaleFilter">Grayscale</button>
+        <button id="sepiaFilter">Sepia</button>
+        <button id="resetFilter">Reset</button>
+        <input type="text" id="textInput" placeholder="Enter text">
+        <input type="color" id="textColor" value="#000000">
+        <input type="number" id="fontSize" placeholder="Font size" min="10" max="100" value="30">
+        <button id="addText">Add Text</button>
+        <button id="downloadCollage">Download Collage</button>
+    </div>
+    <script src="customization.js"></script>
+</body>
+</html>

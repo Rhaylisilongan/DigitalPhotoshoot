@@ -101,6 +101,7 @@ video {
 
 /* Controls section styling */
 .controls {
+    
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -151,7 +152,17 @@ button:hover {
     50% { opacity:1 ; }
     100% { opacity:0 ; }
 }
-
+#photoCount{
+    text-align: right;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 12px;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    
+}
 
 .flash-effect {
     animation: flash 0.3s ease;
@@ -193,4 +204,27 @@ button:hover {
         width: 16px;
         height: 16px;
     }
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #222;
+    color: white;
+}
+
+.dark-mode .navbar a {
+    color: white;
+}
+
+.dark-mode .start-btn {
+    background-color: #00da2f;
+}
+
+.dark-mode #theme-toggle {
+    background-color: black;
+    border: 2px solid white;
+}
+
+.dark-mode #theme-toggle img {
+    filter: invert(0);
 }

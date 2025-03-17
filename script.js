@@ -10,6 +10,9 @@ const photoCountEl = document.getElementById('photoCount');
 const canvas = document.getElementById('canvas');
 const ctx = canvas?.getContext('2d');
 const photos = [];
+const collageData = canvas.toDataURL('image/png');
+     console.log('Collage data to save:', collageData); // Debug: Log the data URL
+     localStorage.setItem('collage', collageData);
 
 // Ensure the download button stays in place but remains hidden
 if (downloadBtn) {
@@ -20,26 +23,26 @@ if (downloadBtn) {
 function toggleTheme() {
     const currentTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
     applyTheme(currentTheme);
+    localStorage.setItem('theme', currentTheme); // Save the theme to localStorage
 }
 
+// Function to apply the theme
 function applyTheme(theme) {
     const themeIcon = document.querySelector('.theme-icon'); // Target the icon by class
     if (theme === 'dark') {
         body.classList.add('dark-mode');
         themeIcon.src = 'sun-icon.png'; // Change icon to sun
-        localStorage.setItem('theme', 'dark');
     } else {
         body.classList.remove('dark-mode');
         themeIcon.src = 'moon-icon.png'; // Change icon to moon
-        localStorage.setItem('theme', 'light');
     }
 }
 
 // Load theme from localStorage on page load
-const savedTheme = localStorage.getItem('theme') || 'light';
+const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light theme
 applyTheme(savedTheme);
 
-// Toggle dark mode when the button is clicked
+// Toggle theme when the button is clicked
 if (themeToggle) {
     themeToggle.addEventListener('click', toggleTheme);
 }
@@ -117,15 +120,19 @@ function provideFeedback() {
     }, 100);
 }
 
-
 // Function to start the capture sequence
 function startCaptureSequence() {
+    captureBtn.textContent = 'Capturing...'; // Change button text to "Capturing..."
+    captureBtn.disabled = true; // Disable the button during capture
+
     photos.length = 0;
     photoCountEl.textContent = '0/3';
 
     function takeNextPhoto(count) {
         if (count > 3) {
             createCollage();
+            captureBtn.textContent = 'Start Capture'; // Revert button text
+            captureBtn.disabled = false; // Re-enable the button
             return;
         }
         startCountdown(5, () => {
@@ -140,35 +147,38 @@ function startCaptureSequence() {
     }
     takeNextPhoto(1);
 }
-function addPhotoToPreview(photoData, count) {
-    const photoElement = document.getElementById(`photo${count}`);
-    photoElement.src = photoData;
-    photoElement.style.visibility = 'visible';
-    photoElement.style.animation = 'slideInLeft 1s ease forwards'; // Trigger slide-in animation
-}
 
 // Function to create a photo collage
-function createCollage() {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const photoWidth = canvas.width - 40;
-    const extraBottomSpace = 80;
-    const photoHeight = (canvas.height - extraBottomSpace - 80) / 3;
+function createCollage() {
+    canvas.width = 800; // Set canvas width
+    canvas.height = 1200; // Set canvas height
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill the canvas with a white background
+
+    const photoWidth = canvas.width - 40; // Width of each photo in the collage
+    const photoHeight = (canvas.height - 80) / 3; // Height of each photo in the collage
 
     photos.forEach((photo, index) => {
         const img = new Image();
         img.src = photo;
         img.onload = () => {
-            const yPosition = 20 + index * (photoHeight + 20);
+            const yPosition = 20 + index * (photoHeight + 20); // Calculate the Y position for each photo
             ctx.fillStyle = 'white';
-            ctx.fillRect(10, yPosition - 10, photoWidth + 20, photoHeight + 20);
-            ctx.drawImage(img, 20, yPosition, photoWidth, photoHeight);
+            ctx.fillRect(10, yPosition - 10, photoWidth + 20, photoHeight + 20); // Add a white border around the photo
+            ctx.drawImage(img, 20, yPosition, photoWidth, photoHeight); // Draw the photo on the canvas
         };
     });
+
+    // Save the collage to localStorage
+    const collageData = canvas.toDataURL('image/png');
+    console.log('Collage data to save:', collageData);
+    localStorage.setItem('collage', collageData); // Save the collage to localStorage
+
+    downloadBtn.textContent = 'Next'; // Change button text to "Next"
     downloadBtn.classList.add('show');
-    downloadBtn.style.visibility = 'visible';  // Make it visible
-    downloadBtn.style.opacity = '1'; 
+    downloadBtn.style.visibility = 'visible'; // Make it visible
+    downloadBtn.style.opacity = '1';
 }
 
 // Initialize webcam and add event listeners
@@ -176,10 +186,6 @@ if (video) {
     initializeWebcam();
     captureBtn.addEventListener('click', startCaptureSequence);
     downloadBtn.addEventListener('click', () => {
-        const image = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = 'photobooth-collage.png';
-        link.click();
+        window.location.href = 'customization.html'; // Redirect to customization.html
     });
 }
