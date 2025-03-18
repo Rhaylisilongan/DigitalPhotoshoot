@@ -7,46 +7,40 @@ body {
     padding: 0;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 h1 {
     font-family: 'Caveat', cursive;
-    font-size: 90px; /* Enlarged text */
-    font-weight: 700; /* Bold */
-    color: #000000; /* Red color */
-    letter-spacing: 2px; /* Spacing between letters */
-    align-items: center;
+    font-size: 50px;
+    font-weight: 700;
+    color: #d30000;
+    letter-spacing: 2px;
     text-align: center;
-    margin-bottom: 20px; /* Adjust spacing below the heading */
+    margin: 10px 0;
 }
 
 .container {
     display: flex;
     width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 400px;
+    margin: 0;
     padding: 20px;
     gap: 20px;
+    align-items: flex-start;
 }
 
 /* Left Section: Customization Panel */
 .customization-panel {
     flex: 1;
-    max-width: 1200px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     max-height: 90vh;
-}
-
-.customization-panel h1 {
-    font-size: 2rem;
-    color: #d30000;
-    margin-bottom: 20px;
+    width: 300px;
 }
 
 .controls {
@@ -57,7 +51,7 @@ h1 {
 
 .button-group {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -66,16 +60,16 @@ h1 {
     flex: 2;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 canvas {
-    border: 1px solid #1111119c; /* Increased border thickness */
+    border: 1px solid #1111119c;
     border-radius: 10px;
     box-shadow: 0 5px 9px rgba(0, 0, 0, 0.199);
     background-color: #fff;
-    max-width: 150%; /* Adjusted to fit screen */
-    max-height: 150vh; /* Adjusted to fit screen */
+    max-width: 1500%;
+    max-height: 150vh;
     width: auto;
     height: auto;
 }
@@ -87,14 +81,14 @@ button {
     color: #fff;
     background-color: #007bff;
     border: none;
-    border-radius: 25px; /* Smooth corners */
+    border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     background-color: #0056b3;
-    transform: scale(1.05); /* Slight zoom on hover */
+    transform: scale(1.05);
 }
 
 button:disabled {
@@ -104,18 +98,13 @@ button:disabled {
 
 /* Download Button */
 #downloadButton {
-    padding: 15px 20px;
-    margin-left: 20px;
     margin-bottom: 20px;
-    font-size: 1.2rem; /* Increase font size */
-    background-color: #14e945;
+    background-color: #33fd62;
     font-weight: bold;
-    width: 250px; /* Set a fixed width */
-
 }
 
 #downloadButton:hover {
-    background-color: #218838;
+    background-color: #18ff4a;
 }
 
 /* Filter Buttons */
@@ -130,18 +119,83 @@ button:disabled {
     font-size: 1rem;
     color: #fff;
     border: none;
-    border-radius: 25px; /* Smooth corners */
+    border-radius: 25px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .filter-button:hover {
-    transform: scale(1.05); /* Slight zoom on hover */
+    transform: scale(1.05);
+}
+
+/* Border Style Buttons */
+.border-style-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.border-style-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex: 1;
+}
+
+.border-style-button:hover {
+    background-color: #007bff;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.border-style-button.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Circular Color Buttons */
+.color-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-button {
+    width: 30px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.color-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Color Picker Input */
+input[type="color"] {
+    padding: 5px;
+    height: 40px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="color"]:focus {
+    border-color: #007bff;
 }
 
 /* Input Styles */
 input[type="text"],
-input[type="color"],
 input[type="number"] {
     padding: 10px;
     font-size: 1rem;
@@ -154,12 +208,6 @@ input[type="number"] {
 input[type="text"]:focus,
 input[type="number"]:focus {
     border-color: #007bff;
-}
-
-input[type="color"] {
-    padding: 5px;
-    height: 40px;
-    cursor: pointer;
 }
 
 input::placeholder {
@@ -175,12 +223,8 @@ input::placeholder {
     }
 
     .customization-panel {
-        max-width: 100%;
-        max-height: none;
-    }
-
-    .preview-panel {
         width: 100%;
+        max-height: none;
     }
 
     canvas {

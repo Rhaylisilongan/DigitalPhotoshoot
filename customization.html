@@ -18,17 +18,35 @@
 
             <!-- Filter Buttons -->
             <div class="filter-buttons">
-                <button class="filter-button" data-filter="none" style="background-color: #ffffff;">None</button>
+                <button class="filter-button" data-filter="none" style="background-color: #c4c3c3;">None</button>
                 <button class="filter-button" data-filter="grayscale(100%)" style="background-color: #808080;">Grayscale</button>
                 <button class="filter-button" data-filter="sepia(100%)" style="background-color: #704214;">Sepia</button>
             </div>
 
-            <!-- Other Controls -->
-            <div class="controls">
-                <div class="button-group">
-                    <label for="borderColor">Border Color:</label>
-                    <input type="color" id="borderColor" value="#ffffff">
+            <!-- New Border Style Buttons -->
+            <div class="button-group">
+                <label>Border Style:</label>
+                <div class="border-style-buttons">
+                <button class="border-style-button" data-border-type="normal">Normal</button>
+                <button class="border-style-button" data-border-type="film">Film Border</button>
+                 <button class="border-style-button" data-border-type="landscape">Landscape</button>
                 </div>
+            </div>
+
+            <!-- Other Controls -->
+            <div class="button-group">
+                <label>Border Color:</label>
+                <!-- Circular Color Buttons -->
+                <div class="color-buttons">
+                    <button class="color-button" data-color="#E5E0E0" style="background-color: #E5E0E0;"></button>
+                    <button class="color-button" data-color="#D3B9B9" style="background-color: #D3B9B9;"></button>
+                    <button class="color-button" data-color="#F2F3CC" style="background-color: #F2F3CC;"></button>
+                    <button class="color-button" data-color="#FBC1FA" style="background-color: #FBC1FA;"></button>
+                    <button class="color-button" data-color="#B3D1F8" style="background-color: #B3D1F8;"></button>
+                </div>
+                <!-- Color Picker Input -->
+                <input type="color" id="borderColor" value="#ffffff">
+            </div>
                 <div class="button-group">
                     <input type="text" id="bottomTextInput" placeholder="Enter bottom text">
                     <input type="color" id="textColor" value="#000000">
