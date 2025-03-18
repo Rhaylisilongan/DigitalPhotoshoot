@@ -1,110 +1,119 @@
-// Select elements
-const collageCanvas = document.getElementById('collageCanvas');
-const ctx = collageCanvas.getContext('2d');
-const grayscaleFilter = document.getElementById('grayscaleFilter');
-const sepiaFilter = document.getElementById('sepiaFilter');
-const resetFilter = document.getElementById('resetFilter');
-const textInput = document.getElementById('textInput');
-const textColor = document.getElementById('textColor');
-const fontSize = document.getElementById('fontSize');
-const addText = document.getElementById('addText');
-const downloadCollage = document.getElementById('downloadCollage');
+window.onload = function () {
+    const collageCanvas = document.getElementById('collageCanvas');
+    const ctx = collageCanvas?.getContext('2d');
 
-// Load the collage image from localStorage
-const collageData = localStorage.getItem('collage'); // Retrieve the collage data URL
-console.log('Collage data from localStorage:', collageData); // Debug: Log the data URL
-
-if (!collageData) {
-    alert('No collage found. Please go back to the photobooth and create a collage.');
-} else {
-    const collageImage = new Image();
-    collageImage.src = collageData;
-
-    collageImage.onload = () => {
-        console.log('Collage image loaded successfully.'); // Debug: Confirm image load
-        // Set canvas dimensions to match the image
-        collageCanvas.width = collageImage.width;
-        collageCanvas.height = collageImage.height;
-
-        // Draw the collage image on the canvas
-        ctx.drawImage(collageImage, 0, 0);
-
-        // Enable customization buttons
-        grayscaleFilter.disabled = false;
-        sepiaFilter.disabled = false;
-        resetFilter.disabled = false;
-        addText.disabled = false;
-        downloadCollage.disabled = false;
-    };
-
-    collageImage.onerror = () => {
-        console.error('Failed to load the collage image from localStorage.');
-    };
-}
-
-// Apply Grayscale Filter
-grayscaleFilter.addEventListener('click', () => {
-    const imageData = ctx.getImageData(0, 0, collageCanvas.width, collageCanvas.height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        data[i] = avg; // Red
-        data[i + 1] = avg; // Green
-        data[i + 2] = avg; // Blue
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-});
-
-// Apply Sepia Filter
-sepiaFilter.addEventListener('click', () => {
-    const imageData = ctx.getImageData(0, 0, collageCanvas.width, collageCanvas.height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-        const red = data[i];
-        const green = data[i + 1];
-        const blue = data[i + 2];
-
-        data[i] = Math.min(255, (red * 0.393) + (green * 0.769) + (blue * 0.189)); // Red
-        data[i + 1] = Math.min(255, (red * 0.349) + (green * 0.686) + (blue * 0.168)); // Green
-        data[i + 2] = Math.min(255, (red * 0.272) + (green * 0.534) + (blue * 0.131)); // Blue
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-});
-
-// Reset Filters
-resetFilter.addEventListener('click', () => {
-    const collageImage = new Image();
-    collageImage.src = collageData;
-    collageImage.onload = () => {
-        ctx.drawImage(collageImage, 0, 0);
-    };
-});
-
-// Add Text to Collage
-addText.addEventListener('click', () => {
-    const text = textInput.value;
-    const color = textColor.value;
-    const size = parseInt(fontSize.value);
-
-    if (!text || isNaN(size)) {
-        alert('Please enter valid text and font size.');
+    if (!collageCanvas || !ctx) {
+        console.error("❌ Error: collageCanvas not found!");
         return;
     }
 
-    ctx.font = `${size}px Arial`;
-    ctx.fillStyle = color;
-    ctx.textAlign = 'center';
-    ctx.fillText(text, collageCanvas.width / 2, collageCanvas.height - 20); // Add text at the bottom
-});
+    let filter = "none";
+    let bottomText = "";
+    let textPosition = 20; // Default text position from bottom
+    let borderSize = 30;
+    let bottomBorderSize = borderSize * 5;
+    let gapSize = 25;
+    let borderColor = "white";
+    let textColor = "black";
+    let fontSize = 30;
 
-// Download Collage
-downloadCollage.addEventListener('click', () => {
-    const link = document.createElement('a');
-    link.download = 'custom-collage.png';
-    link.href = collageCanvas.toDataURL('image/png');
-    link.click();
-});
+    // Retrieve the stored images from localStorage
+    const savedPhotos = localStorage.getItem("capturedPhotos");
+    if (!savedPhotos) {
+        alert("⚠️ No photos found. Please go back to the photobooth and take four photos.");
+        return;
+    }
+
+    const photos = JSON.parse(savedPhotos);
+    if (photos.length < 4) {
+        alert("⚠️ Not enough photos found. Please take four photos in the photobooth.");
+        return;
+    }
+
+    console.log("📸 Photos found, loading collage...");
+
+    // Create Image elements for the four photos
+    const images = photos.map((src) => {
+        const img = new Image();
+        img.src = src;
+        return img;
+    });
+
+    let loadedImages = 0;
+
+    images.forEach((img, index) => {
+        img.onload = function () {
+            loadedImages++;
+            if (loadedImages === 4) {
+                console.log("✅ All images loaded, drawing collage...");
+                drawCollage();
+            }
+        };
+
+        img.onerror = function () {
+            console.error(`❌ Failed to load image ${index + 1}`);
+        };
+    });
+
+    function drawCollage() {
+        if (loadedImages !== 4) return;
+
+        const width = images[0].width + 2 * borderSize;
+        const height = images[0].height * 4 + 3 * gapSize + bottomBorderSize + borderSize;
+        collageCanvas.width = width;
+        collageCanvas.height = height;
+
+        ctx.clearRect(0, 0, collageCanvas.width, collageCanvas.height);
+        ctx.fillStyle = borderColor;
+        ctx.fillRect(0, 0, width, height);
+
+        images.forEach((img, i) => {
+            ctx.filter = filter;
+            ctx.drawImage(img, borderSize, borderSize + i * (img.height + gapSize));
+        });
+
+        // Draw bottom text
+        ctx.fillStyle = textColor;
+        ctx.font = `${fontSize}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(bottomText, width / 2, height - textPosition);
+    }
+
+    // Customization event listeners
+    document.getElementById("filterSelect")?.addEventListener("change", (e) => {
+        filter = e.target.value;
+        drawCollage();
+    });
+
+    document.getElementById("borderColor")?.addEventListener("input", (e) => {
+        borderColor = e.target.value;
+        drawCollage();
+    });
+
+    document.getElementById("bottomTextInput")?.addEventListener("input", (e) => {
+        bottomText = e.target.value;
+        drawCollage();
+    });
+
+    document.getElementById("textPosition")?.addEventListener("input", (e) => {
+        textPosition = parseInt(e.target.value, 10);
+        drawCollage();
+    });
+
+    document.getElementById("textColor")?.addEventListener("input", (e) => {
+        textColor = e.target.value;
+        drawCollage();
+    });
+
+    document.getElementById("fontSize")?.addEventListener("input", (e) => {
+        fontSize = parseInt(e.target.value, 10);
+        drawCollage();
+    });
+
+    document.getElementById("downloadButton")?.addEventListener("click", () => {
+        const link = document.createElement("a");
+        link.download = "collage.png";
+        link.href = collageCanvas.toDataURL("image/png");
+        link.click();
+    });
+};

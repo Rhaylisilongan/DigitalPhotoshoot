@@ -7,17 +7,40 @@
     <link rel="stylesheet" href="customization.css">
 </head>
 <body>
-    <h1>Customize Your Collage</h1>
-    <canvas id="collageCanvas" width="800" height="1200"></canvas>
-    <div class="controls">
-        <button id="grayscaleFilter">Grayscale</button>
-        <button id="sepiaFilter">Sepia</button>
-        <button id="resetFilter">Reset</button>
-        <input type="text" id="textInput" placeholder="Enter text">
-        <input type="color" id="textColor" value="#000000">
-        <input type="number" id="fontSize" placeholder="Font size" min="10" max="100" value="30">
-        <button id="addText">Add Text</button>
-        <button id="downloadCollage">Download Collage</button>
+    <div class="container">
+        <!-- Left Section: Customization Features -->
+        <div class="customization-panel">
+            <h1>Customize Your Collage</h1>
+            <div class="controls">
+                <div class="button-group">
+                    <label for="filterSelect">Filter:</label>
+                    <select id="filterSelect">
+                        <option value="none">None</option>
+                        <option value="grayscale(100%)">Grayscale</option>
+                        <option value="sepia(100%)">Sepia</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <label for="borderColor">Border Color:</label>
+                    <input type="color" id="borderColor" value="#ffffff">
+                </div>
+                <div class="button-group">
+                    <input type="text" id="bottomTextInput" placeholder="Enter bottom text">
+                    <input type="color" id="textColor" value="#000000">
+                    <input type="number" id="fontSize" placeholder="Font size" min="10" max="100" value="30">
+                </div>
+                <div class="button-group">
+                    <label for="textPosition">Text Position:</label>
+                    <input type="number" id="textPosition" min="10" max="300" value="20">
+                </div>
+                <button id="downloadButton">Download Collage</button>
+            </div>
+        </div>
+
+        <!-- Right Section: Collage Preview -->
+        <div class="preview-panel">
+            <canvas id="collageCanvas" width="800" height="1200"></canvas>
+        </div>
     </div>
     <script src="customization.js"></script>
 </body>

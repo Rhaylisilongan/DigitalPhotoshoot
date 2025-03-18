@@ -5,39 +5,73 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
 }
 
 h1 {
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-    color: #444;
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
 }
 
-/* Canvas Styles */
-canvas {
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    margin-bottom: 20px;
-}
-
-/* Controls Container */
-.controls {
+.container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Left Section: Customization Panel */
+.customization-panel {
+    flex: 1;
+    max-width: 400px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.customization-panel h1 {
+    font-size: 2rem;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Right Section: Preview Panel */
+.preview-panel {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    border: 6px solid #ccc; /* Increased border thickness */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 150%; /* Adjusted to fit screen */
+    max-height: 150vh; /* Adjusted to fit screen */
+    width: auto;
+    height: auto;
 }
 
 /* Button Styles */
@@ -84,19 +118,39 @@ input[type="color"] {
     cursor: pointer;
 }
 
+input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Download Button */
+#downloadCollage {
+    background-color: #28a745;
+    font-weight: bold;
+}
+
+#downloadCollage:hover {
+    background-color: #218838;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2rem;
-    }
-
-    .controls {
+    .container {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
     }
 
-    button, input {
+    .customization-panel {
+        max-width: 100%;
+        max-height: none;
+    }
+
+    .preview-panel {
         width: 100%;
-        margin: 5px 0;
+    }
+
+    canvas {
+        width: 100%;
+        height: auto;
     }
 }
