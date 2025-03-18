@@ -13,13 +13,19 @@ body {
 
 h1 {
     font-family: 'Caveat', cursive;
-    font-size: 20px;
+    font-size: 90px; /* Enlarged text */
+    font-weight: 700; /* Bold */
+    color: #000000; /* Red color */
+    letter-spacing: 2px; /* Spacing between letters */
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px; /* Adjust spacing below the heading */
 }
 
 .container {
     display: flex;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
     gap: 20px;
@@ -28,7 +34,7 @@ h1 {
 /* Left Section: Customization Panel */
 .customization-panel {
     flex: 1;
-    max-width: 400px;
+    max-width: 1200px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -39,7 +45,7 @@ h1 {
 
 .customization-panel h1 {
     font-size: 2rem;
-    color: #444;
+    color: #d30000;
     margin-bottom: 20px;
 }
 
@@ -64,9 +70,9 @@ h1 {
 }
 
 canvas {
-    border: 6px solid #ccc; /* Increased border thickness */
+    border: 1px solid #1111119c; /* Increased border thickness */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 9px rgba(0, 0, 0, 0.199);
     background-color: #fff;
     max-width: 150%; /* Adjusted to fit screen */
     max-height: 150vh; /* Adjusted to fit screen */
@@ -81,18 +87,56 @@ button {
     color: #fff;
     background-color: #007bff;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px; /* Smooth corners */
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     background-color: #0056b3;
+    transform: scale(1.05); /* Slight zoom on hover */
 }
 
 button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+/* Download Button */
+#downloadButton {
+    padding: 15px 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    font-size: 1.2rem; /* Increase font size */
+    background-color: #14e945;
+    font-weight: bold;
+    width: 250px; /* Set a fixed width */
+
+}
+
+#downloadButton:hover {
+    background-color: #218838;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    border: none;
+    border-radius: 25px; /* Smooth corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.filter-button:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
 }
 
 /* Input Styles */
@@ -121,16 +165,6 @@ input[type="color"] {
 input::placeholder {
     color: #999;
     font-style: italic;
-}
-
-/* Download Button */
-#downloadCollage {
-    background-color: #28a745;
-    font-weight: bold;
-}
-
-#downloadCollage:hover {
-    background-color: #218838;
 }
 
 /* Responsive Design */

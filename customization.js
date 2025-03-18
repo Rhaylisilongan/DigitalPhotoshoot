@@ -10,9 +10,9 @@ window.onload = function () {
     let filter = "none";
     let bottomText = "";
     let textPosition = 20; // Default text position from bottom
-    let borderSize = 30;
-    let bottomBorderSize = borderSize * 5;
-    let gapSize = 25;
+    let borderSize = 30; // border size
+    let bottomBorderSize = borderSize * 5; // bottom border double size
+    let gapSize = 25; // gap size of photos
     let borderColor = "white";
     let textColor = "black";
     let fontSize = 30;
@@ -79,12 +79,15 @@ window.onload = function () {
         ctx.fillText(bottomText, width / 2, height - textPosition);
     }
 
-    // Customization event listeners
-    document.getElementById("filterSelect")?.addEventListener("change", (e) => {
-        filter = e.target.value;
-        drawCollage();
+    // Filter Button Event Listeners
+    document.querySelectorAll(".filter-button").forEach((button) => {
+        button.addEventListener("click", (e) => {
+            filter = e.target.dataset.filter;
+            drawCollage();
+        });
     });
 
+    // Other Event Listeners
     document.getElementById("borderColor")?.addEventListener("input", (e) => {
         borderColor = e.target.value;
         drawCollage();

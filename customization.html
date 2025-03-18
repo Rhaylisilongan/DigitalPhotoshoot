@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customize Collage</title>
     <link rel="stylesheet" href="customization.css">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <!-- Left Section: Customization Features -->
         <div class="customization-panel">
             <h1>Customize Your Collage</h1>
+            <!-- Download Button -->
+            <button id="downloadButton">Download Collage</button>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-button" data-filter="none" style="background-color: #ffffff;">None</button>
+                <button class="filter-button" data-filter="grayscale(100%)" style="background-color: #808080;">Grayscale</button>
+                <button class="filter-button" data-filter="sepia(100%)" style="background-color: #704214;">Sepia</button>
+            </div>
+
+            <!-- Other Controls -->
             <div class="controls">
-                <div class="button-group">
-                    <label for="filterSelect">Filter:</label>
-                    <select id="filterSelect">
-                        <option value="none">None</option>
-                        <option value="grayscale(100%)">Grayscale</option>
-                        <option value="sepia(100%)">Sepia</option>
-                    </select>
-                </div>
                 <div class="button-group">
                     <label for="borderColor">Border Color:</label>
                     <input type="color" id="borderColor" value="#ffffff">
@@ -33,7 +38,6 @@
                     <label for="textPosition">Text Position:</label>
                     <input type="number" id="textPosition" min="10" max="300" value="20">
                 </div>
-                <button id="downloadButton">Download Collage</button>
             </div>
         </div>
 
