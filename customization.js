@@ -63,11 +63,14 @@ window.onload = function () {
     
         if (borderStyle === "landscape") {
             // Adjustable canvas size for landscape layout
-            width = 800; // Set your desired width for the canvas
-            height = 600; // Set your desired height for the canvas
+            width = 750; // Set your desired width for the canvas
+            height = 550; // Set your desired height for the canvas
     
             // Adjustable gaps and borders for landscape mode
-            const landscapeBorder = 20; // Border size for landscape mode
+            const landscapeBorderLeft = 35;// Border size on the left
+            const landscapeBorderRight = 35;// Border size on the right
+            const landscapeBorderTop = 20;// Border size on the top
+            const landscapeBorderBottom = 20; // Border size on the bottom
             const landscapeGap = 10; // Gap between photos in landscape mode
     
             collageCanvas.width = width;
@@ -78,15 +81,15 @@ window.onload = function () {
             ctx.fillRect(0, 0, width, height);
     
             // Landscape style (2x2 grid)
-            const photoWidth = (width - 2 * landscapeBorder - landscapeGap) / 2; // Width of each photo
-            const photoHeight = (height - 2 * landscapeBorder - landscapeGap) / 2; // Height of each photo
+            const photoWidth = (width -  landscapeBorderLeft - landscapeBorderRight - landscapeGap) / 2; // Width of each photo
+            const photoHeight = (height -  landscapeBorderTop - landscapeBorderBottom - landscapeGap) / 2; // Height of each photo
     
             images.forEach((img, i) => {
                 ctx.filter = filter;
                 const row = Math.floor(i / 2); // Row index (0 or 1)
                 const col = i % 2; // Column index (0 or 1)
-                const x = col * (photoWidth + landscapeGap) + landscapeBorder; // X position
-                const y = row * (photoHeight + landscapeGap) + landscapeBorder; // Y position
+                const x = col * (photoWidth + landscapeGap) + landscapeBorderLeft; // X position
+                const y = row * (photoHeight + landscapeGap) + landscapeBorderTop; // Y position
     
                 // Calculate scaled dimensions to maintain aspect ratio
                 const scale = Math.min(photoWidth / img.width, photoHeight / img.height);

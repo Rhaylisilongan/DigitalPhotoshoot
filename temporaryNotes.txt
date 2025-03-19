@@ -1,0 +1,48 @@
+ctx.fillStyle = "#dfdede"; // Black color for holes
+                const holeSize = 15; // Size of the square holes
+                const holeSpacing = 33; // Spacing between holes
+                const holeOffset = 7; // Offset from the edge
+
+
+
+canvas {
+    border: 1px solid #1111119c;
+    border-radius: 10px;
+    box-shadow: 0 5px 9px rgba(0, 0, 0, 0.199);
+    background-color: #fff;
+    max-width: 1500%;
+    max-height: 150vh;
+    width: auto;
+    height: auto;
+    margin-top: 10px;
+}
+
+
+
+
+
+*bugs to fix
+photobooth
+-flash effect
+-position of photo taken 
+-capture photo and next button combined
+
+
+customization 
+-improper design button
+-text position
+-saving a gif or video of phototaken(backend only, localStorage)
+
+
+*features to add
+photobooth
+-camera selector
+-nav bar
+-keys features (can take picture using keys)
+customization 
+-date
+-stickers (templates or moveable)
+-film 
+-qr code (not yet)
+-nav bar
+-border design (paper)

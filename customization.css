@@ -72,6 +72,7 @@ canvas {
     max-height: 150vh;
     width: auto;
     height: auto;
+    margin-top: 10px;
 }
 
 /* Button Styles */
