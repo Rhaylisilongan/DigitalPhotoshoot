@@ -142,10 +142,12 @@ button:disabled {
     color: #333;
     background-color: #fff;
     border: 2px solid #007bff;
-    border-radius: 10px;
+    border-radius: 10px; /* Rounded square shape */
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     flex: 1;
+    position: relative;
+    overflow: hidden;
 }
 
 .border-style-button:hover {
@@ -157,6 +159,67 @@ button:disabled {
 .border-style-button.active {
     background-color: #007bff;
     color: #fff;
+}
+
+/* Film Border Button Design */
+.border-style-button[data-border-type="film"] {
+    position: relative; /* Ensure the button is a positioning context */
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    border: 2px solid #000; /* Black border */
+    padding: 10px 20px; /* Add padding for better appearance */
+    display: inline-block; /* Ensure the button behaves like a block */
+}
+
+/* Common styles for the holes */
+.border-style-button[data-border-type="film"] .hole {
+    position: absolute;
+    width: 5px; /* Smaller squares */
+    height: 5px; /* Smaller squares */
+    background-color: #fff; /* White color for the holes */
+    border-radius: 0.5px; /* Slightly rounded corners */
+}
+
+/* Left column of holes */
+.border-style-button[data-border-type="film"] .hole-left-1 {
+    top: 5%; /* Position the first hole */
+    left: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-left-2 {
+    top: 35%; /* Position the second hole */
+    left: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-left-3 {
+    top: 63%; /* Position the third hole */
+    left: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-left-4 {
+    top: 90%; /* Position the fourth hole */
+    left: 5px;
+}
+
+/* Right column of holes */
+.border-style-button[data-border-type="film"] .hole-right-1 {
+    top: 5%; /* Position the first hole */
+    right: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-right-2 {
+    top: 35%; /* Position the second hole */
+    right: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-right-3 {
+    top: 63%; /* Position the third hole */
+    right: 5px;
+}
+
+.border-style-button[data-border-type="film"] .hole-right-4 {
+    top: 90%; /* Position the fourth hole */
+    right: 5px;
 }
 
 /* Circular Color Buttons */
@@ -184,11 +247,16 @@ button:disabled {
 input[type="color"] {
     padding: 5px;
     height: 40px;
+    width: 40px; /* Make it square */
     cursor: pointer;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 2px solid #007bff;
+    border-radius: 10px; /* Rounded square shape */
     outline: none;
     transition: border-color 0.3s ease;
+}
+
+input[type="color"]:hover {
+    border-color: #0056b3;
 }
 
 input[type="color"]:focus {

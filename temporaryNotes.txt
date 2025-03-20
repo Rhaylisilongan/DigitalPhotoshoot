@@ -26,23 +26,32 @@ photobooth
 -flash effect
 -position of photo taken 
 -capture photo and next button combined
+-improve the countdown design
 
 
 customization 
 -improper design button
 -text position
--saving a gif or video of phototaken(backend only, localStorage)
+
 
 
 *features to add
 photobooth
 -camera selector
+-retry button
+-inverted camera button
 -nav bar
 -keys features (can take picture using keys)
+-have a camera like grind lines (squared, like on the download button in the figma) but that photo will crop only if the user use landscape
+
 customization 
 -date
+-customization of text (font, sizing, placement)
 -stickers (templates or moveable)
--film 
+-film (FIXED)
+-paper design border deisgn
 -qr code (not yet)
 -nav bar
 -border design (paper)
+-saving a gif or video of phototaken(backend only, localStorage)
+-image preview (overlay the whole page when viewing preview)
