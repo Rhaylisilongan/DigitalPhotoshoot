@@ -18,6 +18,11 @@ canvas {
 }
 
 
+const middleSectionWidth = width * 0.8; // Middle section takes 50% of the width
+
+ const middleLeft = sideSectionWidth + (middleSectionWidth * 0.23); // First middle line (37.5% of the width)
+ const middleRight = sideSectionWidth + (middleSectionWidth * 0.73); // Second middle line (62.5% of the width)
+
 
 
 
@@ -27,7 +32,9 @@ photobooth
 -position of photo taken 
 -capture photo and next button combined
 -improve the countdown design
-
+-change button icon
+-when retrying photo the previous photo dont dissapeared
+-
 
 customization 
 -improper design button
@@ -42,7 +49,13 @@ photobooth
 -inverted camera button
 -nav bar
 -keys features (can take picture using keys)
--have a camera like grind lines (squared, like on the download button in the figma) but that photo will crop only if the user use landscape
+-have a camera like grind lines✅ (squared, like on the download button in the figma) 
+but that photo will crop only if the user use landscape❌
+-save the a whole video when starting to take a photo (1 video to be exact, BACKEND)
+-save a video or gif of 5 second taking of photo (4 gif or video to be exact, BACKEND)
+
+
+
 
 customization 
 -date
