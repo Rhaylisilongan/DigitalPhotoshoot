@@ -9,6 +9,16 @@ const countdownEl = document.getElementById('countdown');
 const photoCountEl = document.getElementById('photoCount');
 const photos = []; // Store individual photos
 
+// Frame guide elements
+const frameGuideCanvas = document.getElementById('frameGuide');
+const frameGuideCtx = frameGuideCanvas.getContext('2d');
+const toggleFrameGuideBtn = document.getElementById('toggleFrameGuide');
+
+// Timer toggle elements
+const timerToggleBtn = document.getElementById('timerToggleBtn');
+const timerIcon = document.getElementById('timerIcon');
+let countdownDuration = 5; // Default countdown duration
+
 // Ensure the download button stays hidden initially
 if (downloadBtn) {
     downloadBtn.style.visibility = 'hidden';
@@ -42,20 +52,32 @@ if (themeToggle) {
 
 // Initialize webcam
 function initializeWebcam() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Your browser does not support accessing the webcam. Please use a modern browser like Chrome or Firefox.');
+        return;
+    }
+
     navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
             video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play(); // Start playing the video stream
+            };
         })
         .catch((error) => {
-            alert('Unable to access the webcam. Please check your camera settings.');
             console.error('Error accessing webcam:', error);
+            if (error.name === 'NotAllowedError') {
+                alert('Camera access was denied. Please allow camera access to use the photobooth.');
+            } else {
+                alert('Unable to access the webcam. Please check your camera settings.');
+            }
         });
 }
 
 // Start countdown
-function startCountdown(seconds, callback) {
+function startCountdown(callback) {
     countdownEl.style.display = 'block';
-    let timeLeft = seconds;
+    let timeLeft = countdownDuration;
     countdownEl.textContent = timeLeft;
     const timer = setInterval(() => {
         timeLeft--;
@@ -101,6 +123,11 @@ function provideFeedback() {
 
 // Capture sequence
 function startCaptureSequence() {
+    if (!video.srcObject) {
+        alert('Please start the camera first.');
+        return;
+    }
+
     captureBtn.textContent = 'Capturing...';
     captureBtn.disabled = true;
 
@@ -119,7 +146,7 @@ function startCaptureSequence() {
             downloadBtn.style.opacity = '1'; // Make sure it’s fully visible
             return;
         }
-        startCountdown(5, () => {
+        startCountdown(() => {
             const photoData = capturePhoto();
             photos.push(photoData);
             document.getElementById(`photo${count}`).src = photoData;
@@ -132,9 +159,165 @@ function startCaptureSequence() {
     takeNextPhoto(1);
 }
 
-// Initialize webcam and add event listeners
+// Draw frame guide
+function drawFrameGuide() {
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+
+    // Set canvas dimensions to match the video
+    frameGuideCanvas.width = width;
+    frameGuideCanvas.height = height;
+
+    // Clear the canvas before redrawing
+    frameGuideCtx.clearRect(0, 0, width, height);
+
+    // Draw a small crosshair in the middle
+    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // White lines with transparency
+    frameGuideCtx.lineWidth = 1; // Thin lines for the crosshair
+
+    // Crosshair size (smaller)
+    const crosshairSize = 20; // Adjust this to make the crosshair smaller or larger
+
+    // Vertical line (middle)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(width / 2, height / 2 - crosshairSize); // Top of the crosshair
+    frameGuideCtx.lineTo(width / 2, height / 2 + crosshairSize); // Bottom of the crosshair
+    frameGuideCtx.stroke();
+
+    // Horizontal line (middle)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(width / 2 - crosshairSize, height / 2); // Left of the crosshair
+    frameGuideCtx.lineTo(width / 2 + crosshairSize, height / 2); // Right of the crosshair
+    frameGuideCtx.stroke();
+
+    // Draw thicker rule of thirds lines
+    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // White lines with transparency
+    frameGuideCtx.lineWidth = 2; // Thicker lines
+
+    // Adjust the rule of thirds grid to make the middle section wider
+    const middleSectionWidth = width * 0.8; // Middle section takes 50% of the width
+    const sideSectionWidth = (width - middleSectionWidth) / 2; // Each side section takes 25% of the width
+
+    // Draw the first and fourth vertical lines (thicker and different color)
+    frameGuideCtx.strokeStyle = 'rgba(255, 0, 0, 0.7)'; // Red color for the outer lines
+    frameGuideCtx.lineWidth = 4; // Thicker lines
+
+    // First vertical line (leftmost)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(sideSectionWidth, 0); // Left line (25% of the width)
+    frameGuideCtx.lineTo(sideSectionWidth, height);
+    frameGuideCtx.stroke();
+
+    // Fourth vertical line (rightmost)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(width - sideSectionWidth, 0); // Right line (75% of the width)
+    frameGuideCtx.lineTo(width - sideSectionWidth, height);
+    frameGuideCtx.stroke();
+
+    // Reset stroke style and line width for the middle lines
+    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // White lines with transparency
+    frameGuideCtx.lineWidth = 2; // Thinner lines
+
+    // Add two more vertical lines in the middle
+    const middleLeft = sideSectionWidth + (middleSectionWidth * 0.23); // First middle line (37.5% of the width)
+    const middleRight = sideSectionWidth + (middleSectionWidth * 0.73); // Second middle line (62.5% of the width)
+
+    // Second vertical line (first middle line)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(middleLeft, 0); // First middle line
+    frameGuideCtx.lineTo(middleLeft, height);
+    frameGuideCtx.stroke();
+
+    // Third vertical line (second middle line)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(middleRight, 0); // Second middle line
+    frameGuideCtx.lineTo(middleRight, height);
+    frameGuideCtx.stroke();
+
+    // Horizontal lines (1/3 and 2/3 of the height)
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(0, height / 3); // Top horizontal line
+    frameGuideCtx.lineTo(width, height / 3);
+    frameGuideCtx.moveTo(0, (2 * height) / 3); // Bottom horizontal line
+    frameGuideCtx.lineTo(width, (2 * height) / 3);
+    frameGuideCtx.stroke();
+
+    // Draw larger L-shapes at the corners
+    const cornerSize = 40; // Increased size of the L-shapes
+    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+
+    // Top-left corner
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(0, cornerSize);
+    frameGuideCtx.lineTo(0, 0);
+    frameGuideCtx.lineTo(cornerSize, 0);
+    frameGuideCtx.stroke();
+
+    // Top-right corner
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(width - cornerSize, 0);
+    frameGuideCtx.lineTo(width, 0);
+    frameGuideCtx.lineTo(width, cornerSize);
+    frameGuideCtx.stroke();
+
+    // Bottom-left corner
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(0, height - cornerSize);
+    frameGuideCtx.lineTo(0, height);
+    frameGuideCtx.lineTo(cornerSize, height);
+    frameGuideCtx.stroke();
+
+    // Bottom-right corner
+    frameGuideCtx.beginPath();
+    frameGuideCtx.moveTo(width - cornerSize, height);
+    frameGuideCtx.lineTo(width, height);
+    frameGuideCtx.lineTo(width, height - cornerSize);
+    frameGuideCtx.stroke();
+}
+
+// Toggle frame guide visibility
+function toggleFrameGuide() {
+    const frameGuideVisible = frameGuideCanvas.style.display === 'block';
+    frameGuideCanvas.style.display = frameGuideVisible ? 'none' : 'block';
+    toggleFrameGuideBtn.textContent = frameGuideVisible ? 'Show Frame Guide' : 'Hide Frame Guide';
+
+    if (!frameGuideVisible) {
+        drawFrameGuide(); // Redraw the frame guide when shown
+    }
+}
+
+// Add event listener to the toggle button
+if (toggleFrameGuideBtn) {
+    toggleFrameGuideBtn.addEventListener('click', toggleFrameGuide);
+}
+
+// Redraw the frame guide when the video resizes
+video.addEventListener('resize', () => {
+    if (frameGuideCanvas.style.display === 'block') {
+        drawFrameGuide();
+    }
+});
+
+// Timer toggle functionality
+timerToggleBtn.addEventListener('click', () => {
+    if (countdownDuration === 5) {
+        // Switch to 10 seconds
+        countdownDuration = 10;
+        timerIcon.src = "10-seconds-icon.png"; // Change to 10-second icon
+        timerIcon.alt = "10 Seconds";
+    } else {
+        // Switch to 5 seconds
+        countdownDuration = 5;
+        timerIcon.src = "5-seconds-icon.png"; // Change to 5-second icon
+        timerIcon.alt = "5 Seconds";
+    }
+});
+
+// Initialize webcam on page load
+initializeWebcam();
+
+// Add event listeners
 if (video) {
-    initializeWebcam();
     captureBtn.addEventListener('click', startCaptureSequence);
     downloadBtn.addEventListener('click', () => {
         window.location.href = 'customization.html'; // Redirect to customization page
