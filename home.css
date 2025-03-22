@@ -10,6 +10,7 @@ body {
     background-color: #ffe6f2;
     position: relative;
     overflow: hidden;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for theme change */
 }
 
 /* Homepage Styles */
@@ -21,10 +22,13 @@ body {
     height: 100vh; /* Full screen height */
     text-align: center;
 }
+
 h1 {
     font-family: 'Caveat', cursive;
     font-size: 50px;
     margin-bottom: 20px; /* Add spacing between text and buttons */
+    color: black; /* Default text color */
+    transition: color 0.3s; /* Smooth transition for theme change */
 }
 
 /* Navigation Bar Styles */
@@ -43,7 +47,7 @@ h1 {
     text-decoration: none; /* Removes underline */
     color: black; /* Text color */
     font-weight: 600;
-    font-family: 'Open Sans,' sans-serif; /* Uses Caveat font */
+    font-family: 'Open Sans', sans-serif; /* Uses Open Sans font */
     transition: color 0.3s;
 }
 
@@ -51,6 +55,7 @@ h1 {
 .navbar a:hover {
     color: #ff3366; /* Changes color on hover */
 }
+
 /* Container for the buttons */
 .button-container {
     display: flex;
@@ -68,10 +73,12 @@ h1 {
     border-radius: 50px;
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.3s; /* Smooth transition for theme change */
 }
 
 .start-btn:hover {
     background-color: #cc0044;
+    transform: scale(1.1); /* Scale effect on hover */
 }
 
 /* Theme toggle button */
@@ -85,48 +92,44 @@ h1 {
     justify-content: center;
     border: 2px solid #ccc; /* Optional border */
     cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for theme change */
 }
 
 #theme-toggle img {
     width: 60%;
     height: 60%;
     object-fit: contain;
+    transition: filter 0.3s; /* Smooth transition for theme change */
 }
 
-.theme-toggle-btn:hover {
-    transform: scale(1.1);
+#theme-toggle:hover {
+    transform: scale(1.1); /* Scale effect on hover */
 }
 
 /* Dark mode styles */
-.dark-mode .navbar {
-    background-color: #222; /* Darker background */
+.dark-mode {
+    background-color: #222;
+    color: white;
+}
+
+.dark-mode h1 {
+    color: white; /* Change text color to white */
 }
 
 .dark-mode .navbar a {
     color: white; /* Change text color to white */
 }
 
-.dark-mode {
-    background-color: #222;
-    color: white;
+.dark-mode .navbar a:hover {
+    color: #ff3366; /* Hover color remains the same */
 }
 
-/* Change button appearance in dark mode */
 .dark-mode .start-btn {
-    background-color: #00da2f;
+    background-color: #00da2f; /* Change button color in dark mode */
 }
 
-.dark-mode .theme-toggle-btn {
-    background-color: black;
-}
 .dark-mode #theme-toggle {
     background-color: black; /* Change background in dark mode */
-    border: 2px solid white;
+    border-color: white; /* Change border color in dark mode */
 }
 
-.dark-mode .theme-toggle-btn img {
-    filter: invert(1); /* White icon */
-}
-.dark-mode h1, .dark-mode p {
-    color: white;
-}

@@ -23,7 +23,7 @@ h1 {
     align-items: center;
     gap: 100px;
     margin-top: 1px;
-    margin-left: 50px;
+    margin-left: 30px;
     flex-wrap: wrap;
     width: 90%;
     max-width: 800px;
@@ -118,7 +118,41 @@ video {
     justify-content: center;
     gap: 10px;
     margin-top: 10px;
-    margin-left: -130px;
+    margin-left: -270px;
+}
+#captureBtn{
+    background-color: #4bdf07; /* Button background color */
+}
+/* Circular button styling */
+#retryBtn {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    border-radius: 50%; /* Makes it circular */
+    background-color: #424242; /* Button background color */
+    border: none;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease;
+    justify-content: center;
+    align-items: center;
+}
+
+#retryBtn.show {
+    display: flex; /* Show the button */
+    opacity: 1;
+}
+
+#retryBtn:hover {
+    background-color: #757575; /* Hover effect */
+}
+
+/* Retry icon styling */
+#retryIcon {
+    width: 24px; /* Adjust icon size as needed */
+    height: 24px;
+    filter: invert(1); /* Makes the icon white */
+    transition: opacity 0.3s ease;
 }
 
 button {
@@ -149,16 +183,8 @@ button:hover {
     opacity: 1;
 }
 
-.theme-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-}
 
-.theme-toggle:hover .theme-icon {
-    transform: scale(1.1);
-}
+
 
 @keyframes flash {
     0% { opacity: 0; }
@@ -220,14 +246,7 @@ body.dark-mode {
     background-color: #00da2f;
 }
 
-.dark-mode #theme-toggle {
-    background-color: black;
-    border: 2px solid white;
-}
 
-.dark-mode #theme-toggle img {
-    filter: invert(0);
-}
 
 /* Round button styling for timer toggle */
 .round-btn {
@@ -254,4 +273,12 @@ body.dark-mode {
     height: 24px;
     filter: invert(1); /* Make the icon white */
     transition: opacity 0.3s ease;
+}
+.frameGuide-icon{
+    margin-top: 3px;
+    width: 25px;
+    height: 25px;
+    transition: opacity 0.3s ease;
+    filter: invert(1); /* Make the icon white */
+
 }

@@ -1,36 +1,43 @@
-function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
+// Wait for the DOM to load before running the script
+document.addEventListener('DOMContentLoaded', () => {
+    // Select the theme toggle button and body
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
 
-    // Get the icon element inside the button
-    const themeIcon = document.querySelector(".theme-toggle-btn img");
-
-    // Check if dark mode is active and switch the icon
-    if (document.body.classList.contains("dark-mode")) {
-        themeIcon.src = "sun-icon.png"; // Change to sun icon
-    } else {
-        themeIcon.src = "moon-icon.png"; // Change back to moon icon
+    // Check if the theme toggle button exists
+    if (!themeToggle) {
+        console.error('Theme toggle button not found!');
+        return;
     }
-}
-// Select the dark mode toggle button
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
 
-// Function to set theme
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        body.classList.add('dark-mode');
-    } else {
-        body.classList.remove('dark-mode');
+    // Select the theme icon inside the button
+    const themeIcon = themeToggle.querySelector('img');
+
+    // Check if the theme icon exists
+    if (!themeIcon) {
+        console.error('Theme icon not found!');
+        return;
     }
-}
 
-// Load theme from localStorage
-const savedTheme = localStorage.getItem('theme') || 'light';
-applyTheme(savedTheme);
+    // Function to set the theme
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.src = 'sun-icon.png'; // Set sun icon for dark mode
+        } else {
+            body.classList.remove('dark-mode');
+            themeIcon.src = 'moon-icon.png'; // Set moon icon for light mode
+        }
+    }
 
-// Toggle dark mode on button click
-themeToggle.addEventListener('click', () => {
-    const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-    applyTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+
+    // Toggle dark mode on button click
+    themeToggle.addEventListener('click', () => {
+        const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme); // Save the new theme to localStorage
+    });
 });

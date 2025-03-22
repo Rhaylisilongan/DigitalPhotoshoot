@@ -1,53 +1,27 @@
 // Select elements
-const themeToggle = document.getElementById('theme-toggle');
-const themeIcon = themeToggle?.querySelector('img');
-const body = document.body;
 const video = document.getElementById('video');
-const captureBtn = document.getElementById('captureBtn');
-const downloadBtn = document.getElementById('downloadBtn');
+const captureBtn = document.getElementById('captureBtn'); // Combined button
+const retryBtn = document.getElementById('retryBtn');
 const countdownEl = document.getElementById('countdown');
 const photoCountEl = document.getElementById('photoCount');
 const photos = []; // Store individual photos
+let currentPhotoIndex = 0; // Track the current photo being taken
+let countdownDuration = 5; // Default countdown duration
 
 // Frame guide elements
 const frameGuideCanvas = document.getElementById('frameGuide');
 const frameGuideCtx = frameGuideCanvas.getContext('2d');
 const toggleFrameGuideBtn = document.getElementById('toggleFrameGuide');
+const frameGuideIcon = document.getElementById('frameGuideIcon');
 
 // Timer toggle elements
 const timerToggleBtn = document.getElementById('timerToggleBtn');
 const timerIcon = document.getElementById('timerIcon');
-let countdownDuration = 5; // Default countdown duration
 
-// Ensure the download button stays hidden initially
-if (downloadBtn) {
-    downloadBtn.style.visibility = 'hidden';
-    downloadBtn.style.opacity = '0';
-}
-
-// Function to handle theme toggling
-function toggleTheme() {
-    const currentTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-    applyTheme(currentTheme);
-    localStorage.setItem('theme', currentTheme);
-}
-
-// Function to apply the theme
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        body.classList.add('dark-mode');
-        themeIcon.src = 'sun-icon.png';
-    } else {
-        body.classList.remove('dark-mode');
-        themeIcon.src = 'moon-icon.png';
-    }
-}
-
-// Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'light';
-applyTheme(savedTheme);
-if (themeToggle) {
-    themeToggle.addEventListener('click', toggleTheme);
+// Ensure the retry button stays hidden initially
+if (retryBtn) {
+    retryBtn.style.display = 'none';
+    retryBtn.style.opacity = '0';
 }
 
 // Initialize webcam
@@ -60,22 +34,21 @@ function initializeWebcam() {
     navigator.mediaDevices.getUserMedia({ video: true })
         .then((stream) => {
             video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play(); // Start playing the video stream
-            };
+            video.play();
         })
         .catch((error) => {
             console.error('Error accessing webcam:', error);
-            if (error.name === 'NotAllowedError') {
-                alert('Camera access was denied. Please allow camera access to use the photobooth.');
-            } else {
-                alert('Unable to access the webcam. Please check your camera settings.');
-            }
+            alert('Unable to access the webcam. Please check your camera settings.');
         });
 }
 
 // Start countdown
 function startCountdown(callback) {
+    if (!countdownEl) {
+        console.error('Countdown element not found in the DOM!');
+        return;
+    }
+
     countdownEl.style.display = 'block';
     let timeLeft = countdownDuration;
     countdownEl.textContent = timeLeft;
@@ -92,14 +65,14 @@ function startCountdown(callback) {
 
 // Capture photo
 function capturePhoto() {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = video.videoWidth;
-    tempCanvas.height = video.videoHeight;
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.translate(video.videoWidth, 0);
-    tempCtx.scale(-1, 1);
-    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-    return tempCanvas.toDataURL('image/png');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.translate(video.videoWidth, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/png');
 }
 
 // Provide visual feedback
@@ -121,42 +94,96 @@ function provideFeedback() {
     }, 100);
 }
 
-// Capture sequence
+// Start capture sequence
 function startCaptureSequence() {
     if (!video.srcObject) {
         alert('Please start the camera first.');
         return;
     }
 
-    captureBtn.textContent = 'Capturing...';
-    captureBtn.disabled = true;
+    if (!captureBtn) {
+        console.error('Capture button not found in the DOM!');
+        return;
+    }
 
-    photos.length = 0;
-    photoCountEl.textContent = '0/4';
+    captureBtn.disabled = true;
+    captureBtn.textContent = 'Capturing...';
 
     function takeNextPhoto(count) {
         if (count > 4) {
-            localStorage.setItem('capturedPhotos', JSON.stringify(photos));
-            console.log("Photos saved to localStorage:", photos);
-            captureBtn.textContent = 'Start Capture';
+            // All photos are taken
+            captureBtn.textContent = 'Next';
             captureBtn.disabled = false;
-            downloadBtn.textContent = 'Next'; // Change button text to "Next"
-            downloadBtn.classList.add('show');
-            downloadBtn.style.visibility = 'visible'; // Ensure it's visible
-            downloadBtn.style.opacity = '1'; // Make sure it’s fully visible
+
+            // Show retry button
+            if (retryBtn) {
+                retryBtn.style.display = 'flex';
+                retryBtn.style.opacity = '1';
+            }
+
             return;
         }
+
         startCountdown(() => {
             const photoData = capturePhoto();
             photos.push(photoData);
-            document.getElementById(`photo${count}`).src = photoData;
-            document.getElementById(`photo${count}`).style.visibility = 'visible';
-            photoCountEl.textContent = `${count}/4`;
-            provideFeedback();
-            takeNextPhoto(count + 1);
+            const photoElement = document.getElementById(`photo${count}`);
+            if (photoElement) {
+                photoElement.src = photoData;
+                photoElement.style.visibility = 'visible';
+            }
+            if (photoCountEl) {
+                photoCountEl.textContent = `${count}/4`;
+            }
+
+            provideFeedback(); // Provide visual feedback after each photo
+            takeNextPhoto(count + 1); // Take the next photo
         });
     }
-    takeNextPhoto(1);
+
+    takeNextPhoto(1); // Start taking photos
+}
+
+// Combined button functionality
+if (captureBtn) {
+    captureBtn.addEventListener('click', () => {
+        if (captureBtn.textContent === 'Start Capture') {
+            // Start capturing photos
+            startCaptureSequence();
+        } else if (captureBtn.textContent === 'Next') {
+            // Redirect to customization page
+            window.location.href = 'customization.html';
+        }
+    });
+}
+
+// Retry functionality
+if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+        const confirmRetry = confirm('Are you sure you want to retake all photos? This will reset the current photos.');
+        if (confirmRetry) {
+            // Reset all photos
+            photos.length = 0;
+            currentPhotoIndex = 0;
+            for (let i = 1; i <= 4; i++) {
+                const photoElement = document.getElementById(`photo${i}`);
+                if (photoElement) {
+                    photoElement.style.visibility = 'hidden';
+                }
+            }
+            if (photoCountEl) {
+                photoCountEl.textContent = '0/4';
+            }
+
+            // Hide retry button
+            retryBtn.style.display = 'none';
+            retryBtn.style.opacity = '0';
+
+            // Reset capture button
+            captureBtn.textContent = 'Start Capture';
+            captureBtn.disabled = false;
+        }
+    });
 }
 
 // Draw frame guide
@@ -275,11 +302,17 @@ function drawFrameGuide() {
     frameGuideCtx.stroke();
 }
 
-// Toggle frame guide visibility
+// Toggle frame guide visibility and update icon
 function toggleFrameGuide() {
     const frameGuideVisible = frameGuideCanvas.style.display === 'block';
     frameGuideCanvas.style.display = frameGuideVisible ? 'none' : 'block';
-    toggleFrameGuideBtn.textContent = frameGuideVisible ? 'Show Frame Guide' : 'Hide Frame Guide';
+    
+    // Update the icon to indicate the frame guide state
+    if (frameGuideVisible) {
+        frameGuideIcon.style.opacity = '0.5'; // Dim the icon when frame guide is off
+    } else {
+        frameGuideIcon.style.opacity = '1'; // Brighten the icon when frame guide is on
+    }
 
     if (!frameGuideVisible) {
         drawFrameGuide(); // Redraw the frame guide when shown
@@ -299,27 +332,21 @@ video.addEventListener('resize', () => {
 });
 
 // Timer toggle functionality
-timerToggleBtn.addEventListener('click', () => {
-    if (countdownDuration === 5) {
-        // Switch to 10 seconds
-        countdownDuration = 10;
-        timerIcon.src = "10-seconds-icon.png"; // Change to 10-second icon
-        timerIcon.alt = "10 Seconds";
-    } else {
-        // Switch to 5 seconds
-        countdownDuration = 5;
-        timerIcon.src = "5-seconds-icon.png"; // Change to 5-second icon
-        timerIcon.alt = "5 Seconds";
-    }
-});
+if (timerToggleBtn && timerIcon) {
+    timerToggleBtn.addEventListener('click', () => {
+        if (countdownDuration === 5) {
+            // Switch to 10 seconds
+            countdownDuration = 10;
+            timerIcon.src = "10-seconds-icon.png"; // Change to 10-second icon
+            timerIcon.alt = "10 Seconds";
+        } else {
+            // Switch to 5 seconds
+            countdownDuration = 5;
+            timerIcon.src = "5-seconds-icon.png"; // Change to 5-second icon
+            timerIcon.alt = "5 Seconds";
+        }
+    });
+}
 
 // Initialize webcam on page load
 initializeWebcam();
-
-// Add event listeners
-if (video) {
-    captureBtn.addEventListener('click', startCaptureSequence);
-    downloadBtn.addEventListener('click', () => {
-        window.location.href = 'customization.html'; // Redirect to customization page
-    });
-}

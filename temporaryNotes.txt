@@ -30,10 +30,10 @@ const middleSectionWidth = width * 0.8; // Middle section takes 50% of the width
 photobooth
 -flash effect
 -position of photo taken 
--capture photo and next button combined
+-capture photo and next button combined ✅
 -improve the countdown design
 -change button icon
--when retrying photo the previous photo dont dissapeared
+-when retrying photo the previous photo dont dissapeared ✅
 -
 
 customization 
