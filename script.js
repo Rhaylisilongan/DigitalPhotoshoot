@@ -1,12 +1,16 @@
 // Select elements
 const video = document.getElementById('video');
+const cameraSelect = document.getElementById('cameraSelect');
+let cameras = []; // Store available cameras
 const captureBtn = document.getElementById('captureBtn'); // Combined button
 const retryBtn = document.getElementById('retryBtn');
 const countdownEl = document.getElementById('countdown');
 const photoCountEl = document.getElementById('photoCount');
+const invertBtn = document.getElementById('invertBtn');
 const photos = []; // Store individual photos
 let currentPhotoIndex = 0; // Track the current photo being taken
 let countdownDuration = 5; // Default countdown duration
+let currentStream = null;
 
 // Frame guide elements
 const frameGuideCanvas = document.getElementById('frameGuide');
@@ -24,24 +28,93 @@ if (retryBtn) {
     retryBtn.style.opacity = '0';
 }
 
-// Initialize webcam
-function initializeWebcam() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('Your browser does not support accessing the webcam. Please use a modern browser like Chrome or Firefox.');
-        return;
-    }
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            video.srcObject = stream;
-            video.play();
-        })
-        .catch((error) => {
-            console.error('Error accessing webcam:', error);
-            alert('Unable to access the webcam. Please check your camera settings.');
+async function populateCameraDropdown() {
+    try {
+        // Request camera access first
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop()); // Stop the current stream
+        }
+        currentStream = stream;
+
+        // Get all media devices
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log('Devices found:', devices); // Log all devices
+
+        // Filter only video input devices (cameras)
+        const cameras = devices.filter(device => device.kind === 'videoinput');
+        console.log('Cameras found:', cameras); // Log cameras
+
+        // Clear any existing options
+        cameraSelect.innerHTML = '';
+
+        // Add each camera as an option in the dropdown
+        cameras.forEach((camera, index) => {
+            const option = document.createElement('option');
+            option.value = camera.deviceId;
+            option.text = camera.label || `Camera ${index + 1}`; // Use a default label if no label is available
+            cameraSelect.appendChild(option);
         });
+
+        // If no cameras are found, display a message
+        if (cameras.length === 0) {
+            const option = document.createElement('option');
+            option.text = 'No cameras found';
+            cameraSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error accessing cameras:', error);
+    }
 }
 
+// Function to start the camera
+async function startCamera(deviceId) {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+    }
+    const constraints = {
+        video: deviceId ? { deviceId: { exact: deviceId } } : true
+    };
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        currentStream = stream;
+    } catch (error) {
+        console.error('Error starting camera:', error);
+    }
+}
+
+// Event listener for camera selection change
+cameraSelect.addEventListener('change', () => {
+    const selectedCameraId = cameraSelect.value;
+    startCamera(selectedCameraId);
+});
+
+// Populate the camera dropdown and start the default camera on page load
+window.onload = async () => {
+    await populateCameraDropdown();
+    startCamera(cameraSelect.value); // Start the first camera by default
+};
+
+// Function to toggle camera inversion
+function toggleInvertCamera() {
+    const isInverted = video.style.transform === 'scaleX(-1)';
+    video.style.transform = isInverted ? 'scaleX(1)' : 'scaleX(-1)'; // Toggle inversion
+}
+
+// Add event listener to the invert button
+if (invertBtn) {
+    invertBtn.addEventListener('click', toggleInvertCamera);
+}
+// Add a button to toggle inversion (optional)
+
+
+// Populate the camera dropdown and start the default camera on page load
+window.onload = async () => {
+    await populateCameraDropdown();
+    startCamera(cameraSelect.value); // Start the first camera by default
+};
 // Start countdown
 function startCountdown(callback) {
     if (!countdownEl) {
@@ -72,26 +145,42 @@ function capturePhoto() {
     ctx.translate(video.videoWidth, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Trigger enhanced flash effect
+    provideFeedback();
+    
     return canvas.toDataURL('image/png');
 }
-
-// Provide visual feedback
+// Enhanced flash effect function
 function provideFeedback() {
-    const feedback = document.createElement('div');
-    feedback.style.position = 'absolute';
-    feedback.style.top = '0';
-    feedback.style.left = '0';
-    feedback.style.width = '100%';
-    feedback.style.height = '100%';
-    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-    feedback.style.pointerEvents = 'none';
-
-    const videoContainer = document.querySelector('.video-container');
-    videoContainer.appendChild(feedback);
-
+    // Create flash overlay
+    const flashOverlay = document.createElement('div');
+    flashOverlay.className = 'flash-overlay';
+    
+    // Position it exactly over the video element
+    const video = document.getElementById('video');
+    const videoRect = video.getBoundingClientRect();
+    
+    flashOverlay.style.position = 'absolute';
+    flashOverlay.style.top = `${videoRect.top}px`;
+    flashOverlay.style.left = `${videoRect.left}px`;
+    flashOverlay.style.width = `${videoRect.width}px`;
+    flashOverlay.style.height = `${videoRect.height}px`;
+    flashOverlay.style.zIndex = '1000';
+    // In provideFeedback():
+flashOverlay.style.boxShadow = '0 0 0 40px rgba(255,255,255,0.8)';
+    
+    document.body.appendChild(flashOverlay);
+    
+    // Trigger the flash animation
     setTimeout(() => {
-        videoContainer.removeChild(feedback);
-    }, 100);
+        flashOverlay.classList.add('flash-active');
+    }, 10);
+    
+    // Remove after animation completes
+    setTimeout(() => {
+        flashOverlay.remove();
+    }, 500);
 }
 
 // Start capture sequence
@@ -112,6 +201,8 @@ function startCaptureSequence() {
     function takeNextPhoto(count) {
         if (count > 4) {
             // All photos are taken
+            localStorage.setItem('capturedPhotos', JSON.stringify(photos));
+            console.log("Photos saved to localStorage:", photos);
             captureBtn.textContent = 'Next';
             captureBtn.disabled = false;
 
@@ -199,7 +290,7 @@ function drawFrameGuide() {
     frameGuideCtx.clearRect(0, 0, width, height);
 
     // Draw a small crosshair in the middle
-    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // White lines with transparency
+    frameGuideCtx.strokeStyle = 'rgba(94, 94, 94, 0.78)'; // White lines with transparency
     frameGuideCtx.lineWidth = 1; // Thin lines for the crosshair
 
     // Crosshair size (smaller)
@@ -218,15 +309,15 @@ function drawFrameGuide() {
     frameGuideCtx.stroke();
 
     // Draw thicker rule of thirds lines
-    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; // White lines with transparency
-    frameGuideCtx.lineWidth = 2; // Thicker lines
+    frameGuideCtx.strokeStyle = 'rgba(187, 187, 187, 0.81)'; // White lines with transparency
+    frameGuideCtx.lineWidth = 0.5; // Thicker lines
 
     // Adjust the rule of thirds grid to make the middle section wider
     const middleSectionWidth = width * 0.8; // Middle section takes 50% of the width
     const sideSectionWidth = (width - middleSectionWidth) / 2; // Each side section takes 25% of the width
 
     // Draw the first and fourth vertical lines (thicker and different color)
-    frameGuideCtx.strokeStyle = 'rgba(255, 0, 0, 0.7)'; // Red color for the outer lines
+    frameGuideCtx.strokeStyle = 'rgba(114, 97, 97, 0.88)'; // Red color for the outer lines
     frameGuideCtx.lineWidth = 4; // Thicker lines
 
     // First vertical line (leftmost)
@@ -271,7 +362,7 @@ function drawFrameGuide() {
 
     // Draw larger L-shapes at the corners
     const cornerSize = 40; // Increased size of the L-shapes
-    frameGuideCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    frameGuideCtx.strokeStyle = 'rgba(94, 94, 94, 0.78)';
 
     // Top-left corner
     frameGuideCtx.beginPath();
@@ -348,5 +439,3 @@ if (timerToggleBtn && timerIcon) {
     });
 }
 
-// Initialize webcam on page load
-initializeWebcam();

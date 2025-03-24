@@ -18,8 +18,14 @@
     <main>
         <div class="container">
             <!-- Video container with buttons -->
+            <div class="camera-selector">
+                <label for="cameraSelect"></label>
+                <select id="cameraSelect">
+                    <!-- Camera options will be populated dynamically -->
+                </select>
+            </div>
             <div class="video-container">
-                <video id="video" autoplay></video>
+                <video id="video" id="video-preview" autoplay playsinline></video> <!-- <video id="video-preview" autoplay playsinline></video>-->
                 <canvas id="frameGuide" style="position: absolute; top: 0; left: 0;"></canvas>
                 <p id="countdown">5</p>
                 <!-- Buttons moved here -->
@@ -31,6 +37,7 @@
                     <button id="toggleFrameGuide" class="round-btn">
                         <img src="frame-guideline-icon.png" alt="Frame Guide" id="frameGuideIcon">
                     </button>
+                    <button id="invertBtn" class="round-btn">Invert Camera</button>
                     <button id="timerToggleBtn" class="round-btn">
                         <img src="5-seconds-icon.png" alt="5 Seconds" id="timerIcon" class="timer-icon">
                     </button>
