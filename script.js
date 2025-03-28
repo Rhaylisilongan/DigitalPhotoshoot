@@ -8,6 +8,12 @@ const countdownEl = document.getElementById('countdown');
 const photoCountEl = document.getElementById('photoCount');
 const invertBtn = document.getElementById('invertBtn');
 const photos = []; // Store individual photos
+// Add to your existing variable declarations
+let mediaRecorder;
+let recordedChunks = [];
+let sessionVideoBlob;
+let photoVideos = [];
+const videoDB = new VideoDB(); // Remove if using import
 let currentPhotoIndex = 0; // Track the current photo being taken
 let countdownDuration = 5; // Default countdown duration
 let currentStream = null;
@@ -183,39 +189,68 @@ flashOverlay.style.boxShadow = '0 0 0 40px rgba(255,255,255,0.8)';
     }, 500);
 }
 
-// Start capture sequence
-function startCaptureSequence() {
+async function startCaptureSequence() {
+    console.log("1️⃣ Starting capture sequence...");
     if (!video.srcObject) {
+        console.error("❌ Camera not started!"); // Debug camera error
         alert('Please start the camera first.');
         return;
     }
 
-    if (!captureBtn) {
-        console.error('Capture button not found in the DOM!');
-        return;
-    }
+    // Debug camera status
+    console.log("📹 Camera stream active?", video.srcObject.getVideoTracks()[0].readyState);
 
     captureBtn.disabled = true;
     captureBtn.textContent = 'Capturing...';
+    
+     // Video recording debug
+    console.log("⏺️ Starting session video recording...");
+    // Start session video recording
+    await startVideoRecording();
+    console.log("✅ Session recording started");
+    sessionVideoBlob = null;
+    photoVideos = [];
 
-    function takeNextPhoto(count) {
+    async function takeNextPhoto(count) {
+        console.log(`📸 PHASE ${count}/4 started`); // Track photo number
+
         if (count > 4) {
-            // All photos are taken
+            console.log("🏁 All photos completed - saving media...");
+
+            // Save session video
+            console.log("⏹️ Stopping session recording...");
+            sessionVideoBlob = await stopVideoRecording();
+            console.log("💾 Saving session video (size:", sessionVideoBlob.size, "bytes)");
+            await videoDB.saveVideo(sessionVideoBlob);
+            
+            // Save interval videos
+            console.log("🎬 Saving", photoVideos.length, "interval videos");
+            for (const [i, videoBlob] of photoVideos.entries()) {
+                console.log(`💾 Saving interval video ${i+1} (size: ${videoBlob.size} bytes)`);
+                await videoDB.saveVideo(videoBlob);
+            }
+
+            // Save photos to localStorage as before
             localStorage.setItem('capturedPhotos', JSON.stringify(photos));
-            console.log("Photos saved to localStorage:", photos);
+            
             captureBtn.textContent = 'Next';
             captureBtn.disabled = false;
 
-            // Show retry button
             if (retryBtn) {
                 retryBtn.style.display = 'flex';
                 retryBtn.style.opacity = '1';
             }
-
             return;
         }
 
-        startCountdown(() => {
+        startCountdown(async () => {
+            // Stop current video segment
+            if (count > 1) {
+                const videoBlob = await stopVideoRecording();
+                photoVideos.push(videoBlob);
+            }
+
+            // Take photo (existing code)
             const photoData = capturePhoto();
             photos.push(photoData);
             const photoElement = document.getElementById(`photo${count}`);
@@ -227,12 +262,48 @@ function startCaptureSequence() {
                 photoCountEl.textContent = `${count}/4`;
             }
 
-            provideFeedback(); // Provide visual feedback after each photo
-            takeNextPhoto(count + 1); // Take the next photo
+            provideFeedback();
+            
+            // Start recording next segment unless it's the last photo
+            if (count < 4) {
+                await startVideoRecording();
+            }
+            
+            takeNextPhoto(count + 1);
         });
     }
 
-    takeNextPhoto(1); // Start taking photos
+    takeNextPhoto(1);
+}
+// Add these new functions to your existing codem
+async function startVideoRecording() {
+    try {
+        const stream = video.srcObject;
+        if (!stream) throw new Error('No video stream available');
+        
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.start(100); // Capture data every 100ms
+    } catch (error) {
+        console.error('Error starting video recording:', error);
+    }
+}
+
+async function stopVideoRecording() {
+    return new Promise((resolve) => {
+        mediaRecorder.onstop = () => {
+            const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+            resolve(videoBlob);
+        };
+        mediaRecorder.stop();
+    });
 }
 
 // Combined button functionality
